@@ -54,16 +54,5 @@ def register(request):
         except Exception as e:
             return JsonResponse({'message': '注册失败', 'error': str(e),'hashed_password':hashed_password}, status=400)
 
-        # try:
-        #     if Usert.objects.filter(us_name=username).exists():
-        #         return JsonResponse({'message': '用户名已存在'}, status=400)
-        #
-        #     user = Usert.objects.create(us_name=username, us_passwd=hashed_password)
-        #     user.save()
-        #     return JsonResponse({'message': '注册成功'})
-        # except IntegrityError as e:
-        #     return JsonResponse({'message': '注册失败，用户名已存在'}, status=400)
-        # except Exception as e:
-        #     return JsonResponse({'message': '注册失败', 'username':username, 'password':password, 'hashed_password':hashed_password}, status=400)
-
+        #test
     return JsonResponse({'message': '请求方法不允许'}, status=405)
