@@ -84,13 +84,19 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-'default': {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'new_test',
+        'NAME': 'ctools_db',
         'USER': 'root',
         'PASSWORD': 'wichai0515',
-        'HOST': '43.143.114.225',  # 如果 MySQL 服务器在本地
-        'PORT': '3306',       # MySQL 默认端口为 3306
+        'HOST': '43.143.114.225',  # MySQL 服务器腾讯云
+        'PORT': '3307',  # MySQL 端口为 3307
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'new_test',
+        # 'USER': 'root',
+        # 'PASSWORD': 'wichai0515',
+        # 'HOST': '43.143.114.225',  # 如果 MySQL 服务器在本地
+        # 'PORT': '3306',       # MySQL 默认端口为 3306
     }
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
