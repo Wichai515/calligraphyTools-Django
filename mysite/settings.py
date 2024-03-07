@@ -88,7 +88,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ctools_db',
         'USER': 'root',
-        'PASSWORD': 'wichai0515', #提交前删除
+        'PASSWORD': '', #提交前删除
         'HOST': '43.143.114.225',  # MySQL 服务器腾讯云
         'PORT': '3307',  # MySQL 端口为 3307
         # 'ENGINE': 'django.db.backends.mysql',
