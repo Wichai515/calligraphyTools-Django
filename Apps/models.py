@@ -28,7 +28,7 @@ class Author(models.Model):
 class Book(models.Model):
     bo_id = models.AutoField(primary_key=True)
     bo_name = models.CharField(max_length=255)
-    au_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+    au = models.ForeignKey(Author, on_delete=models.CASCADE, default=None, related_name='books', db_column='au_id')
     bo_author_photo = models.CharField(max_length=255, default=None, blank=True, null=True)
     bo_type = models.CharField(max_length=50)
     bo_dynasty = models.CharField(max_length=50)
@@ -42,7 +42,7 @@ class Book(models.Model):
 
 class Book_Ph(models.Model):
     bo_ph_id = models.BigAutoField(primary_key=True)
-    bo_id = models.ForeignKey(Book, on_delete=models.CASCADE)
+    bo = models.ForeignKey(Book, on_delete=models.CASCADE, default=None, related_name='bookphoto', db_column='bo_id')
     bo_ph_version = models.CharField(max_length=100)
     bo_ph_num = models.IntegerField()
     bo_ph_url = models.CharField(max_length=255)
