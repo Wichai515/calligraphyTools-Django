@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     
     'Apps',
     'corsheaders',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
-    'corsheaders.middleware.CorsMiddleware',
+    
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -88,7 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ctools_db',
         'USER': 'root',
-        'PASSWORD': '', #提交前删除
+        'PASSWORD': 'wichai0515', #提交前删除
         'HOST': '43.143.114.225',  # MySQL 服务器腾讯云
         'PORT': '3307',  # MySQL 端口为 3307
         # 'ENGINE': 'django.db.backends.mysql',

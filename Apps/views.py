@@ -56,3 +56,24 @@ def register(request):
 
         #test
     return JsonResponse({'message': '请求方法不允许'}, status=405)
+
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .models import Author
+from .serializers import AuthorSerializer
+from rest_framework import status
+
+
+@api_view(['GET'])
+def get_authors(request):
+    try:
+        # 获取所有的书法家数据
+        authors = Author.objects.all()
+        # 序列化数据
+        serializer = AuthorSerializer(authors, many=True)
+        # 返回成功响应
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        # 返回错误响应
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
