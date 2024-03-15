@@ -27,5 +27,6 @@ urlpatterns = [
     path('api/get-booksphoto/', views.get_booksphoto, name='get_booksphoto'),
     path('api/get-book-photos/<int:bo_id>/', views.get_book_photos, name='get_book_photos'),
     path('api/get-book-photos/<int:bo_id>/<str:version>/', views.get_book_photos_version, name='get_book_photos_version'),
+    path('api/get-search-dictionary/<str:character>/<str:font>/', views.get_search_dictionary, name='get_search_dictionary'),
 ]
 

@@ -127,7 +127,7 @@ def get_book_photos(request, bo_id):
         # 序列化数据
         serializer = BookPhSerializer(book_photos, many=True)
         # 返回成功响应
-        return Response({'message': 'Book version photos retrieved successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
+        return Response({'message': 'Book version retrieved successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
     except Exception as e:
         # 返回错误响应
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -140,8 +140,44 @@ def get_book_photos_version(request, bo_id, version):
         # 序列化数据
         serializer = BookPhSerializer(book_photos, many=True)
         # 返回成功响应
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'message': 'Book version photos retrieved successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
     except Exception as e:
         # 返回错误响应
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+from .serializers import DictionarySerializer, CnCharacterSerializer
+from .models import Dictionary, CnCharacter
+
+# @csrf_exempt
+@api_view(['GET'])
+def get_search_dictionary(request, character, font):
+    try:
+        # 查询 Dictionary 表中与 character 和 font 相关的数据
+        queryset = Dictionary.objects.filter(di_character_sim=character, di_type=font)
+        # 序列化查询结果
+        serializer = DictionarySerializer(queryset, many=True)
+
+        # 获取所有匹配的 CnCharacter 记录的 ch_id
+        ch_ids = queryset.values_list('ch_id', flat=True)
+        # 查询对应的 CnCharacter 表中的数据
+        cn_character_queryset = CnCharacter.objects.filter(ch_id__in=ch_ids)
+        # 序列化 CnCharacter 数据
+        cn_character_serializer = CnCharacterSerializer(cn_character_queryset, many=True)
+
+        # 将 CnCharacter 的数据合并到 Dictionary 的数据中
+        for item in serializer.data:
+            ch_id = item['ch']
+            # 找到对应的 CnCharacter 数据并添加到字典中
+            cn_character_data = next((ch for ch in cn_character_serializer.data if ch['ch_id'] == ch_id), None)
+            if cn_character_data:
+                item['ch'] = cn_character_data
+
+        return Response({'message': 'Dictionary photos retrieved successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        # 返回错误响应
+        error_response_data = {'error': str(e)}
+        return Response(error_response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 

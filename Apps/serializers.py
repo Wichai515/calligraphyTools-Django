@@ -21,3 +21,19 @@ class BookPhSerializer(serializers.ModelSerializer):
         fields = ['bo_ph_id', 'bo_id', 'bo_ph_version', 'bo_ph_num', 'bo_ph_url', 'bo_ph_url_bu', 'bo_ph_created_at']
 
 
+from .models import Dictionary, CnCharacter
+class CnCharacterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CnCharacter
+        fields = ['ch_id', 'ch_character_sim', 'ch_character_com', 'ch_explain']
+
+class DictionarySerializer(serializers.ModelSerializer):
+    # 嵌套序列化器，用于包含 CnCharacter 的相关数据
+    ch = CnCharacterSerializer()
+
+    class Meta:
+        model = Dictionary
+        fields = ['di_id', 'di_character_sim', 'di_character_com', 'ch', 'au', 'bo', 'di_dynasty', 'di_type', 'di_photo_url', 'di_number', 'di_ph_created_at']
+
+
+

@@ -51,3 +51,31 @@ class Book_Ph(models.Model):
 
     class Meta:
         db_table = 'Book_Ph'
+
+
+class CnCharacter(models.Model):
+    ch_id = models.BigAutoField(primary_key=True)
+    ch_character_sim = models.CharField(max_length=1)
+    ch_character_com = models.CharField(max_length=1)
+    ch_explain = models.CharField(max_length=255, default=None, null=True)
+
+    class Meta:
+        db_table = 'CnCharacter'
+
+class Dictionary(models.Model):
+    di_id = models.BigAutoField(primary_key=True)
+    di_character_sim = models.CharField(max_length=1)
+    di_character_com = models.CharField(max_length=1)
+    ch = models.ForeignKey(CnCharacter, on_delete=models.CASCADE, default=None, db_column='ch_id', related_name='cn_character')
+    au = models.ForeignKey(Author, on_delete=models.CASCADE, default=None, db_column='au_name', related_name='author')
+    bo = models.ForeignKey(Book, on_delete=models.CASCADE, default=None, db_column='bo_name', related_name='book')
+    di_dynasty = models.CharField(max_length=100)
+    di_type = models.CharField(max_length=100)
+    di_photo_url = models.CharField(max_length=255)
+    di_number = models.IntegerField()
+    di_ph_created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'Dictionary'
+
+
