@@ -182,4 +182,56 @@ def get_search_dictionary(request, character, font):
         error_response_data = {'error': str(e)}
         return Response(error_response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+import json
+from .models import Author, Book, Book_Ph
+import json
+from django.core.exceptions import ObjectDoesNotExist
+@api_view(['POST'])
+def post_books(request):
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+
+        # 查询作者ID
+        author_name = data['author']
+        author = Author.objects.get(au_name=author_name)
+        author_id = author.au_id
+
+        # 保存书籍信息
+        book_data = {
+            'bo_name': data['bookName'],
+            'au_id': author_id,
+            'bo_type': data['type'],
+            'bo_dynasty': data['dynasty'],
+            'bo_introduce': data['introduction'],
+            # 'bo_version': data['version']
+        }
+        book = Book.objects.create(**book_data)
+
+        # 保存书籍图片信息
+        images_data = data.get('images', [])
+        cover_url = None  # 初始化 cover_url
+        for image_data in images_data:
+            book_photo_data = {
+                'bo_id': book.bo_id,
+                'bo_ph_version': data['version'],
+                'bo_ph_num': image_data['page'],
+                'bo_ph_url': image_data['url'],
+            }
+            Book_Ph.objects.create(**book_photo_data)
+            # 检查页码是否为1，如果是则设为封面
+            if image_data['page'] == 1:
+                cover_url = image_data['url']
+
+            # 设置封面URL
+        if cover_url:
+            book.bo_cover_url = cover_url
+            book.save()
+
+        return JsonResponse({'message': 'Books created successfully'}, status=201)
+    except ObjectDoesNotExist as e:
+        return JsonResponse({'error': f'Author "{author_name}" not found in database'}, status=400)
+    except KeyError as e:
+        return JsonResponse({'error': f'Missing key: {str(e)}'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 

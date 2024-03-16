@@ -28,5 +28,8 @@ urlpatterns = [
     path('api/get-book-photos/<int:bo_id>/', views.get_book_photos, name='get_book_photos'),
     path('api/get-book-photos/<int:bo_id>/<str:version>/', views.get_book_photos_version, name='get_book_photos_version'),
     path('api/get-search-dictionary/<str:character>/<str:font>/', views.get_search_dictionary, name='get_search_dictionary'),
+
+    path('api/post-books/', views.post_books, name='post_books'),
+
 ]
 
