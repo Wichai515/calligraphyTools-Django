@@ -6,6 +6,9 @@ from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt #关闭  Django 默认开启了 CSRF 保护机制
 from .models import Usert
 from django.db import IntegrityError
+from itsdangerous import URLSafeSerializer
+# 创建一个安全序列化器
+serializer = URLSafeSerializer('vjXa$,Prd4agk5Z')
 
 @csrf_exempt
 def login(request):
@@ -19,9 +22,8 @@ def login(request):
         try:
             user = Usert.objects.get(us_name=username)
             if check_password(password, user.us_passwd):
-            #if password == user.us_passwd:
-                # 登录成功
-                return JsonResponse({'message': '登录成功'})
+                token = serializer.dumps({'username': username})
+                return JsonResponse({'message': '登录成功', 'token': token})
             else:
                 # 密码错误
                 return JsonResponse({'message': '密码错误'}, status=400)
