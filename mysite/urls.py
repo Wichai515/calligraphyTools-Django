@@ -30,6 +30,9 @@ urlpatterns = [
     path('api/get-search-dictionary/<str:character>/<str:font>/', views.get_search_dictionary, name='get_search_dictionary'),
 
     path('api/post-books/', views.post_books, name='post_books'),
+    path('api/post-characters/', views.post_characters, name='post_characters'),
+
+    path('api/post-collections/', views.post_collections, name='post_collections'),
 
 ]
 

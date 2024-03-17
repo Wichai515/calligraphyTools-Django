@@ -209,7 +209,7 @@ def post_books(request):
 
         # 保存书籍图片信息
         images_data = data.get('images', [])
-        cover_url = None  # 初始化 cover_url
+        cover_url = 'http://192.168.3.52:7791/i/2024/03/17/65f6557ec6bfd.jpg'  # 初始化 cover_url
         for image_data in images_data:
             book_photo_data = {
                 'bo_id': book.bo_id,
@@ -235,3 +235,130 @@ def post_books(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+@api_view(['POST'])
+def post_characters(request):
+    try:
+        data = request.data
+        book_name = data.get('book_name')
+        dynasty = data.get('dynasty')
+        font = data.get('type')
+        author_name = data.get('author_name')  # 获取作者名
+        characters = data.get('characters')
+
+        # 根据书名查询对应的 Book 实例
+        book_instance = Book.objects.get(bo_name=book_name)
+
+        # 根据作者名查询对应的 Author 实例
+        author_instance = Author.objects.get(au_name=author_name)
+
+        for character_data in characters:
+            character_sim = character_data.get('character_sim')
+            character_com = character_data.get('character_com')
+            photo_url = character_data.get('photo_url')
+            dictionary_number = character_data.get('dictionary_number')
+
+            # 检查汉字表中是否已存在该字
+            cn_character, created = CnCharacter.objects.get_or_create(
+                ch_character_sim=character_sim,
+                ch_character_com=character_com
+            )
+
+            # 创建或获取字典记录
+            dictionary, created = Dictionary.objects.get_or_create(
+                di_character_sim=character_sim,
+                di_character_com=character_com,
+                ch=cn_character,  # 使用汉字对象作为外键
+                bo=book_instance,  # 使用 Book 实例作为外键
+                au=author_instance,  # 使用 Author 实例作为外键
+                au_name=author_name,
+                bo_name=book_name,
+                di_dynasty=dynasty,
+                di_type=font,
+                di_photo_url=photo_url,
+                di_number=dictionary_number
+            )
+
+        return Response({'message': 'Characters uploaded successfully!'}, status=201)
+
+    except ObjectDoesNotExist as e:
+        return Response({'error': f'Object does not exist: {str(e)}'}, status=400)
+
+    except KeyError as e:
+        return Response({'error': f'Missing key: {str(e)}'}, status=400)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
+from .models import Collection
+@api_view(['POST'])
+def post_collections(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            title = data.get('title')
+            font = data.get('font')
+            calligraphers = data.get('calligraphers')
+            txt = data.get('txt')
+            columns = data.get('columns')
+            token = data.get('token')  # 获取 token
+        except:
+            return Response({'message': '解析数据失败'}, status=400)
+
+        # 根据 token 获取用户的 us_id
+        try:
+            payload = serializer.loads(token)
+            username = payload.get('username')
+            user = Usert.objects.get(us_name=username)
+            us_id = user.us_id
+        except:
+            return Response({'message': '获取用户信息失败'}, status=400)
+
+        # 根据文本内容和书法家偏好搜索并保存数据
+        choose_di = []
+        for index,ch in enumerate(txt, start=1):  # 使用enumerate获取索引，从1开始计数
+            dictionary_entry = None
+            for calligrapher in calligraphers:
+                try:
+                    dictionary_entry = Dictionary.objects.filter(
+                        di_character_sim=ch,
+                        au__au_name=calligrapher,
+                        di_type=font
+                    ).first()  # 使用first()方法获取第一个匹配的对象
+                    if dictionary_entry:
+                        break
+                except Dictionary.DoesNotExist:
+                    pass
+
+            if dictionary_entry:
+                choose_di.append({
+                    'collect_num': index,  # 使用索引作为字的序号
+                    'co_ch': ch,
+                    'dictionary_id': dictionary_entry.di_id
+                })
+            else:
+                choose_di.append({
+                    'collect_num': index,  # 使用索引作为字的序号
+                    'co_ch': ch,
+                    'dictionary_id': None
+                })
+
+        co_setting = {
+            'font': font,
+            'calligraphers': calligraphers,
+            'columns': columns,
+            'choose_di': choose_di
+        }
+
+        # 创建集字对象并保存到数据库
+        try:
+            collection = Collection.objects.create(
+                co_title=title,
+                us_id=us_id,  # 将获取到的用户ID与集字关联
+                co_txt=txt,
+                co_setting=co_setting
+            )
+            return Response({'message': '集字创建成功','co_id': collection.co_id}, status=201)
+        except:
+            return Response({'message': '集字创建失败'}, status=400)
+    else:
+        return Response({'message': '请求方法不允许'}, status=405)

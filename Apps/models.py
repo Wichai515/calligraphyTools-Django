@@ -67,8 +67,10 @@ class Dictionary(models.Model):
     di_character_sim = models.CharField(max_length=1)
     di_character_com = models.CharField(max_length=1)
     ch = models.ForeignKey(CnCharacter, on_delete=models.CASCADE, default=None, db_column='ch_id', related_name='cn_character')
-    au = models.ForeignKey(Author, on_delete=models.CASCADE, default=None, db_column='au_name', related_name='author')
-    bo = models.ForeignKey(Book, on_delete=models.CASCADE, default=None, db_column='bo_name', related_name='book')
+    au = models.ForeignKey(Author, on_delete=models.CASCADE, default=None, db_column='au_id', related_name='author')
+    bo = models.ForeignKey(Book, on_delete=models.CASCADE, default=None, db_column='bo_id', related_name='book')
+    au_name = models.CharField(max_length=255)
+    bo_name = models.CharField(max_length=255)
     di_dynasty = models.CharField(max_length=100)
     di_type = models.CharField(max_length=100)
     di_photo_url = models.CharField(max_length=255)
@@ -78,4 +80,13 @@ class Dictionary(models.Model):
     class Meta:
         db_table = 'Dictionary'
 
+class Collection(models.Model):
+    co_id = models.AutoField(primary_key=True)
+    co_title = models.CharField(max_length=255)
+    us = models.ForeignKey(Usert, on_delete=models.CASCADE, default=None, db_column='us_id', related_name='collections')
+    co_txt = models.TextField()
+    co_setting = models.JSONField(default=None, null=True)
+    co_created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = 'Collection'

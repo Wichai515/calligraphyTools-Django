@@ -33,7 +33,6 @@ class DictionarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dictionary
-        fields = ['di_id', 'di_character_sim', 'di_character_com', 'ch', 'au', 'bo', 'di_dynasty', 'di_type', 'di_photo_url', 'di_number', 'di_ph_created_at']
-
-
+        fields = ['di_id', 'di_character_sim', 'di_character_com', 'ch', 'au', 'bo', 'di_dynasty', 'di_type', 'di_photo_url', 'di_number', 'di_ph_created_at', 'au_name', 'bo_name', 'au_id', 'bo_id']
+        depth = 1  # 包含关联模型的所有字段
 
