@@ -36,3 +36,14 @@ class DictionarySerializer(serializers.ModelSerializer):
         fields = ['di_id', 'di_character_sim', 'di_character_com', 'ch', 'au', 'bo', 'di_dynasty', 'di_type', 'di_photo_url', 'di_number', 'di_ph_created_at', 'au_name', 'bo_name', 'au_id', 'bo_id']
         depth = 1  # 包含关联模型的所有字段
 
+from .models import Collection
+class CollectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = ['co_id', 'co_title', 'co_txt', 'co_created_at']  # 只包含你想要返回的字段
+
+class CollectionDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collection
+        fields = ['co_id', 'co_title', 'co_txt', 'co_created_at', 'co_setting']  # 包含集字的详细信息
+

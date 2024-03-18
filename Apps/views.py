@@ -362,3 +362,74 @@ def post_collections(request):
             return Response({'message': '集字创建失败'}, status=400)
     else:
         return Response({'message': '请求方法不允许'}, status=405)
+
+from .serializers import CollectionSerializer
+
+
+
+@api_view(['GET'])
+def get_collections(request, token):
+    serializer = URLSafeSerializer('vjXa$,Prd4agk5Z')
+    if request.method == 'GET':
+        try:
+            payload = serializer.loads(token)
+            username = payload.get('username')
+            user = Usert.objects.get(us_name=username)
+            us_id = user.us_id
+        except:
+            return Response({'message': '获取用户信息失败'}, status=400)
+
+        # 获取用户的所有集字数据
+        collections = Collection.objects.filter(us_id=us_id)
+
+        # 使用序列化器序列化数据
+        serializer = CollectionSerializer(collections, many=True)
+
+        return Response(serializer.data)
+    else:
+        return Response({'message': '请求方法不允许'}, status=405)
+
+
+from .serializers import CollectionDetailSerializer
+@api_view(['GET'])
+def get_collection_details(request, token, co_id):
+    serializer = URLSafeSerializer('vjXa$,Prd4agk5Z')
+    if request.method == 'GET':
+        try:
+            payload = serializer.loads(token)
+            username = payload.get('username')
+            user = Usert.objects.get(us_name=username)
+            us_id = user.us_id
+        except:
+            return Response({'message': '获取用户信息失败'}, status=400)
+
+        try:
+            # 根据 co_id 获取集字详情
+            collection = Collection.objects.get(pk=co_id, us_id=us_id)
+        except Collection.DoesNotExist:
+            return Response({'message': '集字详情不存在'}, status=404)
+
+        # 使用序列化器序列化集字详情，包括 settings
+        serializer = CollectionDetailSerializer(collection)
+
+        return Response(serializer.data)
+    else:
+        return Response({'message': '请求方法不允许'}, status=405)
+
+
+from django.shortcuts import get_object_or_404
+@api_view(['GET'])
+def get_DicCharacter(request, di_id):
+    try:
+        # 根据 di_id 获取对应的字典条目
+        dictionary_entry = get_object_or_404(Dictionary, pk=di_id)
+
+        # 使用序列化器序列化数据
+        serializer = DictionarySerializer(dictionary_entry)
+
+        return Response(serializer.data)
+    except Exception as e:
+        # 返回错误响应
+        return Response({'error': str(e)}, status=500)
+
+
