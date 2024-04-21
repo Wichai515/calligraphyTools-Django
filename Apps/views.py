@@ -182,7 +182,7 @@ def get_search_dictionary(request, character, font):
         error_response_data = {'error': str(e)}
         return Response(error_response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-import json
+
 from .models import Author, Book, Book_Ph
 import json
 from django.core.exceptions import ObjectDoesNotExist
@@ -235,6 +235,7 @@ def post_books(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
 
+
 @api_view(['POST'])
 def post_characters(request):
     try:
@@ -242,7 +243,7 @@ def post_characters(request):
         book_name = data.get('book_name')
         dynasty = data.get('dynasty')
         font = data.get('type')
-        author_name = data.get('author_name')  # 获取作者名
+        author_name = data.get('author_name')  # 获取书法家名
         characters = data.get('characters')
 
         # 根据书名查询对应的 Book 实例
@@ -432,4 +433,33 @@ def get_DicCharacter(request, di_id):
         # 返回错误响应
         return Response({'error': str(e)}, status=500)
 
+
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from .util import predict_font  # 导入图像预测函数
+
+@api_view(['GET'])
+def get_predict_font_style(request):
+    try:
+        # 检查请求中是否包含文件
+        if 'image' not in request.FILES:
+            return JsonResponse({'error': 'No image file provided'}, status=400)
+
+        # 获取上传的所有文件
+        files = request.FILES.getlist('image')
+
+        # 遍历文件列表
+        for image_file in files:
+            # 获取图像预测结果
+            predicted_font = predict_font(image_file)
+
+            # 打印预测结果
+            print("Predicted font:", predicted_font)
+
+        # 返回预测结果
+        return JsonResponse({'predicted_font': predicted_font})
+
+    except Exception as e:
+        # 返回错误响应
+        return JsonResponse({'error': str(e)}, status=500)
 
