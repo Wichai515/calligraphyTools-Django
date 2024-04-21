@@ -40,6 +40,6 @@ urlpatterns = [
     # path('api/post-authors/', views.post_authors, name='post_authors'),
     path('api/post-collections/', views.post_collections, name='post_collections'),
 
-    path('api/get-predict-font-style/', views.get_predict_font_style, name='get_predict_font_style'),
+    path('api/post-predict-font-style/', views.post_predict_font_style, name='post_predict_font_style'),
 ]
 

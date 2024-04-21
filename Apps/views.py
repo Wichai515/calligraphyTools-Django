@@ -438,8 +438,8 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .util import predict_font  # 导入图像预测函数
 
-@api_view(['GET'])
-def get_predict_font_style(request):
+@api_view(['POST'])
+def post_predict_font_style(request):
     try:
         # 检查请求中是否包含文件
         if 'image' not in request.FILES:
