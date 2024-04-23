@@ -41,5 +41,7 @@ urlpatterns = [
     path('api/post-collections/', views.post_collections, name='post_collections'),
 
     path('api/post-predict-font-style/', views.post_predict_font_style, name='post_predict_font_style'),
+    path('api/post-predict-character/', views.post_predict_character, name='post_predict_character'),
+    
 ]
 

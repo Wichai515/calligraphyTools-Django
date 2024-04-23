@@ -463,3 +463,29 @@ def post_predict_font_style(request):
         # 返回错误响应
         return JsonResponse({'error': str(e)}, status=500)
 
+from .util import predict_calligraphy
+@api_view(['POST'])
+def post_predict_character(request):
+
+    try:
+        # 检查请求中是否包含文件
+        if 'image' not in request.FILES:
+            return JsonResponse({'error': 'No image file provided'}, status=400)
+
+        # 获取上传的所有文件
+        files = request.FILES.getlist('image')
+
+        # 遍历文件列表
+        for image_file in files:
+            # 获取图像预测结果
+            predict_calligraphy1 = predict_calligraphy(image_file)
+
+            # 打印预测结果
+            print("Predicted font:", predict_calligraphy1)
+
+        # 返回预测结果
+        return JsonResponse({'predict_calligraphy': predict_calligraphy1})
+
+    except Exception as e:
+        # 返回错误响应
+        return JsonResponse({'error': str(e)}, status=500)
